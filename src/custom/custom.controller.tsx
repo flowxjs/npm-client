@@ -7,6 +7,7 @@ import { CustomMiddleware } from './custom.middleware';
 import { CustomError } from './custom.error';
 import { inject } from 'inversify';
 import { CustomService } from './custom.service';
+import { Button } from 'antd';
 
 @Controller()
 @Template(CustomTemplate)
@@ -28,6 +29,7 @@ export class CustomController {
     return <React.Fragment>
       <p>Count++: {count} | Random Number: {this.CustomService.getdefaultCount()}</p>
       <span>
+        <Button type="primary">Text Button</Button>
         Edit <code>src/custom/custom.controller.tsx</code> and save to reload. <br />
         <button onClick={click}>Click +</button>
         <TestComponent count={count} />

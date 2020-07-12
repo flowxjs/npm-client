@@ -1,9 +1,10 @@
-import './index.css';
+import 'antd/dist/antd.css';
 import React from 'react';
 import { bootstrp, usePopStateHistoryMode } from '@typeclient/core';
 import { ReactApplication } from '@typeclient/react';
 import { CustomController } from './custom/custom.controller';
 import * as serviceWorker from './serviceWorker';
+import { PackageController } from './package/package.controller';
 
 // use `popstate` model
 usePopStateHistoryMode();
@@ -16,6 +17,7 @@ const app = new ReactApplication({
 export const Slot = app.createSlotter();
 
 app.setController(CustomController);
+app.setController(PackageController);
 
 app.on('Application.onError', (err, ctx) => <p>Error: {err.message}</p>);
 app.on('Application.onNotFound', (req) => <p>Not Found: {req.pathname}</p>);

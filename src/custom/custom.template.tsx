@@ -3,7 +3,7 @@ import logo from '../logo.svg';
 import { Slot } from '..';
 import './custom.style.css';
 export function CustomTemplate(props: React.PropsWithoutRef<{}>) {
-  return <React.StrictMode>
+  return <React.Fragment>
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -19,5 +19,5 @@ export function CustomTemplate(props: React.PropsWithoutRef<{}>) {
       </header>
       
     </div>
-  </React.StrictMode>
+  </React.Fragment>
 }
