@@ -1,9 +1,12 @@
-import React, { useCallback } from 'react';
+import './package.style.less';
+import React from 'react';
+import classnames from 'classnames';
 import { inject } from 'inversify';
-import { Controller, Route, Context } from "@typeclient/core";
-import { TPackageRouteData } from "./package.interface";
+import { Controller, Route, Context, State } from "@typeclient/core";
+import { TPackageRouteData, PackageRouteData } from "./package.interface";
 import { useContextComponent, useContextState } from "@typeclient/react";
 import { PackageComponents } from './package.components';
+import { Flex } from '../components';
 
 @Controller()
 export class PackageController {
@@ -13,14 +16,19 @@ export class PackageController {
   @Route('/:scope/:pathname')
   @Route('/:pathname/v/:version')
   @Route('/:scope/:pathname/v/:version')
+  @State(PackageRouteData)
   ViewPackageInformationPage(ctx: Context<TPackageRouteData>) {
-    const { status } = useContextState(() => {
+    const { channel } = useContextState(() => {
       return {
-        status: ctx.status.value
+        channel: ctx.state.channel,
       }
     })
-    const XCmp = useContextComponent(ctx.app, this.PackageComponents, 'test');
-    const go = useCallback(() => ctx.redirect('/react'), [ctx]);
-    return <div onClick={go}>{status} - {ctx.params.scope}/{ctx.params.pathname}{ctx.params.version ? '@' + ctx.params.version : null}<XCmp /></div>;
+    const Nav = useContextComponent(this.PackageComponents, 'nav');
+    const Content = useContextComponent(this.PackageComponents, 'content');
+    return <Flex className="package-page" blocked fulled>
+      <Flex className="sidebar" fulled direction="column"><Nav /></Flex>
+      <Flex className={classnames('transform', { active: !!channel })} fulled></Flex>
+      <Flex className="container" fulled span={1} direction="row"><Content /></Flex>
+    </Flex>;
   }
 }

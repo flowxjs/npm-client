@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Controller, Route, Context, State, useMiddleware, useException } from "@typeclient/core";
 import { TCustomRouteData, CustomRouteData } from "./custom.interface";
-import { Template, useContextState, useContextComponent, ReactApplication } from '@typeclient/react';
+import { Template, useContextState, useContextComponent } from '@typeclient/react';
 import { CustomTemplate } from './custom.template';
 import { CustomMiddleware } from './custom.middleware';
 import { CustomError } from './custom.error';
@@ -25,7 +25,7 @@ export class CustomController {
       }
     });
     const click = useCallback(() => ctx.state.count = ctx.state.count + 2, [ctx.state.count]);
-    const TestComponent = useContextComponent<TCustomRouteData, CustomService>(ctx.app as ReactApplication, this.CustomService, 'cumstomComponent');
+    const TestComponent = useContextComponent<TCustomRouteData, CustomService>(this.CustomService, 'cumstomComponent');
     return <React.Fragment>
       <p>Count++: {count} | Random Number: {this.CustomService.getdefaultCount()}</p>
       <span>

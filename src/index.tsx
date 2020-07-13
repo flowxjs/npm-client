@@ -1,4 +1,5 @@
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
+import './index.less';
 import React from 'react';
 import { bootstrp, usePopStateHistoryMode } from '@typeclient/core';
 import { ReactApplication } from '@typeclient/react';
