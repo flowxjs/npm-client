@@ -11,6 +11,7 @@
     "@typeclient/core": "^1.0.8",
     "@typeclient/react": "^1.0.16",
     "@types/classnames": "^2.2.10",
+    "@types/gravatar": "^1.8.1",
     "@types/jest": "^24.9.1",
     "@types/node": "^12.12.50",
     "@types/react": "^16.9.43",
@@ -18,6 +19,7 @@
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "antd": "^4.4.2",
+    "axios": "^0.19.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.1.0",
@@ -39,6 +41,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
+    "gravatar": "^1.8.0",
     "html-webpack-plugin": "4.0.0-beta.11",
     "identity-obj-proxy": "3.0.0",
     "jest": "24.9.0",
@@ -161,5 +164,6 @@
         }
       ]
     ]
-  }
+  },
+  "proxy": "http://192.168.62.172:3000"
 }

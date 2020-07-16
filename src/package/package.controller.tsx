@@ -2,21 +2,23 @@ import './package.style.less';
 import React from 'react';
 import classnames from 'classnames';
 import { inject } from 'inversify';
-import { Controller, Route, Context, State } from "@typeclient/core";
+import { Controller, Route, Context, State, useMiddleware } from "@typeclient/core";
 import { TPackageRouteData, PackageRouteData } from "./package.interface";
 import { useContextComponent, useContextState } from "@typeclient/react";
 import { PackageComponents } from './package.components';
 import { Flex } from '../components';
+import { PackageFetchMiddleware } from './middlewares/package.fetch';
 
 @Controller()
 export class PackageController {
   @inject(PackageComponents) private readonly PackageComponents: PackageComponents;
 
   @Route('/:pathname')
-  @Route('/:scope/:pathname')
+  @Route('/@:scope/:pathname')
   @Route('/:pathname/v/:version')
-  @Route('/:scope/:pathname/v/:version')
+  @Route('/@:scope/:pathname/v/:version')
   @State(PackageRouteData)
+  @useMiddleware(PackageFetchMiddleware)
   ViewPackageInformationPage(ctx: Context<TPackageRouteData>) {
     const { channel } = useContextState(() => {
       return {

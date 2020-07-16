@@ -3,11 +3,17 @@ import classnames from 'classnames';
 import { injectable, inject } from 'inversify';
 import { Component, useContextState, useApplicationContext, useContextComponent } from '@typeclient/react';
 import { Flex } from '../components';
-import { AntDesignOutlined, CloudSyncOutlined, AlignRightOutlined } from '@ant-design/icons';
+import { AntDesignOutlined, CloudSyncOutlined, AlignRightOutlined, LinkOutlined, BranchesOutlined } from '@ant-design/icons';
 import { TPackageRouteData } from './package.interface';
 import { Context } from '@typeclient/core';
 import { PackageService } from './package.service';
 import { Col, Row, Avatar } from 'antd';
+import Parse from 'url-parse';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { url as gurl } from 'gravatar';
+
+dayjs.extend(relativeTime);
 
 const Markdown = require('markdown-to-jsx').default;
 
@@ -50,9 +56,13 @@ export class PackageComponents {
 
   @Component()
   content() {
-    const { channel } = useContextState((ctx: Context<TPackageRouteData>) => {
+    const { channel, readme } = useContextState((ctx: Context<TPackageRouteData>) => {
+      const meta = ctx.state.packageMetaData;
+      const currentVersion = ctx.params.version ? ctx.params.version : meta['dist-tags']['latest'];
+      const _version = meta.versions[currentVersion]
       return {
         channel: ctx.state.channel,
+        readme: meta.readme || (_version ? _version.readme || 'no readme file.' : 'no readme file.') || 'no readme file.'
       }
     });
     const ContentInfo = useContextComponent(this, 'contentInfo');
@@ -60,92 +70,7 @@ export class PackageComponents {
     return <React.Fragment>
       <Flex className="package-info" fulled direction="column"><ContentInfo /></Flex>
       <Flex className="package-readme" fulled span={1}>
-      <Markdown>{`# vue-next [![beta](https://img.shields.io/npm/v/vue/next.svg)](https://www.npmjs.com/package/vue/v/next) [![CircleCI](https://circleci.com/gh/vuejs/vue-next.svg?style=svg&circle-token=fb883a2d0a73df46e80b2e79fd430959d8f2b488)](https://circleci.com/gh/vuejs/vue-next)
-
-## Status: Beta
-
-- All planned RFCs have been merged.
-
-- All [merged RFCs](https://github.com/vuejs/rfcs/pulls?q=is%3Apr+is%3Amerged+label%3A3.x) have been implemented.
-
-- Vue CLI now has experimental support via [vue-cli-plugin-vue-next](https://github.com/vuejs/vue-cli-plugin-vue-next).
-
-- There is also a simple plain webpack-based setup with Single-File Component support available [here](https://github.com/vuejs/vue-next-webpack-preview).
-
-Please note that there could still be undocumented behavior inconsistencies with 2.x. When you run into such a case, please make sure to first check if the behavior difference has already been proposed in an existing RFC. If the inconsistency is not part of an RFC, then it's likely unintended, and an issue should be opened (please make sure to use the [issue helper](https://new-issue.vuejs.org/?repo=vuejs/vue-next) when opening new issues).
-
-In addition, the current implementation requires native ES2015+ in the runtime environment and does not support IE11 (yet). The IE11 compatible build will be worked on after we have reached RC stage.
-
-## Status of the rest of the framework
-
-### Vue Router
-
-- [![alpha](https://img.shields.io/npm/v/vue-router/next.svg)](https://www.npmjs.com/package/vue-router/v/next)
-- [Github](https://github.com/vuejs/vue-router-next)
-- [RFCs](https://github.com/vuejs/rfcs/pulls?q=is%3Apr+is%3Amerged+label%3Arouter)
-
-We still have a few minor router hook behavior consistency issues with \`vue-router@3.x\`, but these are the only things that is blocking the router from being marked as Beta. The router is usable for new, non-critical projects.
-
-### Vuex
-
-- [![beta](https://img.shields.io/npm/v/vuex/next.svg)](https://www.npmjs.com/package/vuex/v/next)
-- [Github](https://github.com/vuejs/vuex/tree/4.0)
-
-The only difference between Vuex 4.0 and 3.x is that it's Vue 3 compatible! It is ready to enter RC together with Vue 3 core.
-
-### Vue CLI
-
-Vue 3 support in Vue CLI is currently provided via the [vue-cli-plugin-vue-next](https://github.com/vuejs/vue-cli-plugin-vue-next) plugin. You can scaffold a new project and then run \`vue add vue-next\` to switch to Vue 3. Vue 3 will become a option in the project creation process when it reaches RC.
-
-Note if you are not particularly attached to webpack and IE11 support, you can also start a Vue 3 project with [Vite](https://github.com/vitejs/vite).
-
-### JSX Support
-
-There are currently two JSX transform implementations for Vue 3 with slightly differing syntax (for Vue specific features):
-
-- [vueComponent/jsx](https://github.com/vueComponent/jsx)
-- [HcySunYang/vue-next-jsx](https://github.com/HcySunYang/vue-next-jsx)
-
-We are using [this thread](https://github.com/vuejs/jsx/issues/141) to unify the design and land on an official specification of how Vue features should be handled in JSX. If you use Vue with JSX, please provide your feedback in that thread.
-
-### Other Projects
-
-| Project             | Status |
-| ------------------- | ------ |
-| vue-devtools        | WIP (beta channel with Vue 3 support in early July) |
-| eslint-plugin-vue   | [![alpha][epv-badge]][epv-npm] [[Github][epv-code]] |
-| @vue/test-utils     | [![alpha][vtu-badge]][vtu-npm] [[Github][vtu-code]] |
-| vue-class-component | [![alpha][vcc-badge]][vcc-npm] [[Github][vcc-code]] |
-| vue-loader          | [![alpha][vl-badge]][vl-npm] [[Github][vl-code]] |
-| rollup-plugin-vue   | [![alpha][rpv-badge]][rpv-npm] [[Github][rpv-code]] |
-
-[epv-badge]: https://img.shields.io/npm/v/eslint-plugin-vue/next.svg
-[epv-npm]: https://www.npmjs.com/package/eslint-plugin-vue/v/next
-[epv-code]: https://github.com/vuejs/eslint-plugin-vue
-
-[vtu-badge]: https://img.shields.io/npm/v/@vue/test-utils/next.svg
-[vtu-npm]: https://www.npmjs.com/package/@vue/test-utils/v/next
-[vtu-code]: https://github.com/vuejs/vue-test-utils-next
-
-[jsx-badge]: https://img.shields.io/npm/v/@ant-design-vue/babel-plugin-jsx.svg
-[jsx-npm]: https://www.npmjs.com/package/@ant-design-vue/babel-plugin-jsx
-[jsx-code]: https://github.com/vueComponent/jsx
-
-[vcc-badge]: https://img.shields.io/npm/v/vue-class-component/next.svg
-[vcc-npm]: https://www.npmjs.com/package/vue-class-component/v/next
-[vcc-code]: https://github.com/vuejs/vue-class-component/tree/next
-
-[vl-badge]: https://img.shields.io/npm/v/vue-loader/next.svg
-[vl-npm]: https://www.npmjs.com/package/vue-loader/v/next
-[vl-code]: https://github.com/vuejs/vue-loader/tree/next
-
-[rpv-badge]: https://img.shields.io/npm/v/rollup-plugin-vue/next.svg
-[rpv-npm]: https://www.npmjs.com/package/rollup-plugin-vue/v/next
-[rpv-code]: https://github.com/vuejs/rollup-plugin-vue/tree/next
-
-## Contribution
-
-See [Contributing Guide](https://github.com/vuejs/vue-next/blob/master/.github/contributing.md).`}</Markdown>
+      <Markdown>{readme}</Markdown>
       </Flex>
       <Flex className={classnames('package-versions', {
         active: !channel
@@ -155,37 +80,65 @@ See [Contributing Guide](https://github.com/vuejs/vue-next/blob/master/.github/c
 
   @Component()
   contentInfo() {
+    const { name, version, distTags, license, homepage, repository, time, maintainers } = useContextState((ctx: Context<TPackageRouteData>) => {
+      const meta = ctx.state.packageMetaData;
+      const distTags: { key: string, value: string }[] = [];
+      const currentVersion = ctx.params.version ? ctx.params.version : meta['dist-tags']['latest'];
+      for (let i in meta['dist-tags']) distTags.push({ key: i, value: meta['dist-tags'][i] });
+      return {
+        name: meta.name,
+        version: currentVersion,
+        distTags,
+        homepage: meta.homepage,
+        license: meta.license,
+        repository: meta.repository.type === 'git' ? this.getGitUrl(meta.repository.url) : meta.repository.url,
+        time: new Date(meta.time[currentVersion]),
+        maintainers: meta.maintainers.map(maintainer => {
+          return {
+            name: maintainer.name,
+            url: gurl(maintainer.email),
+          }
+        })
+      }
+    })
     const Label = useContextComponent<TLabel, PackageComponents>(this, 'labelInfo');
     return <React.Fragment>
-      <div className="title">@vue/react</div>
+      <div className="title">{name}</div>
       <div className="brands">
-        <img src="https://img.shields.io/badge/version-1.2.4-brightgreen" alt=""/>
-        <img src="https://img.shields.io/badge/registry-public-red" alt=""/>
-        <img src="https://img.shields.io/badge/latest-16.13.1-brightgreen" alt=""/>
-        <img src="https://img.shields.io/badge/next-16.13.1-yellow" alt=""/>
+        {
+          distTags.map(tag => {
+            const version = this.formatVersionLabel(tag.value);
+            return <img key={tag.key} src={`https://img.shields.io/badge/${tag.key}-${version}-${tag.key === 'latest' ? 'blue' : 'green'}`} alt={tag.value}/>
+          })
+        }
       </div>
       <Row>
-        <Label name="Install" fulled>npm i react</Label>
-        <Label name="Weekly Downloads" fulled>
+        <Label name="Install" fulled>npm i {name}</Label>
+        {/* <Label name="Weekly Downloads" fulled>
           <Flex className="weekly-item" blocked align="between">
             <span>7,511,919</span>
             <span>图片</span>
           </Flex>
-        </Label>
-        <Label name="Version">16.13.1</Label>
-        <Label name="License">MIT</Label>
-        <Label name="Unpacked Size">204KB</Label>
+        </Label> */}
+        <Label name="Version">{version}</Label>
+        <Label name="License">{license}</Label>
+        {/* <Label name="Unpacked Size">204KB</Label>
         <Label name="Total Files">10</Label>
         <Label name="Issues">490</Label>
-        <Label name="Pull Requests">104</Label>
-        <Label name="Homepage" fulled>reactjs.org/</Label>
-        <Label name="Repository" fulled>github.com/facebook/react</Label>
-        <Label name="Last publish" fulled>23 days ago</Label>
+        <Label name="Pull Requests">104</Label> */}
+        <Label name="Homepage" fulled>
+          <a href={homepage} target="_blank" rel="noopener noreferrer"><LinkOutlined /> {this.getUrlHost(homepage)}</a>
+        </Label>
+        <Label name="Repository" fulled>
+          <a href={repository} target="_blank" rel="noopener noreferrer"><BranchesOutlined /> {this.getUrlHostAndPathname(repository)}</a>
+        </Label>
+      <Label name="Last publish" fulled>{dayjs(time).fromNow()}</Label>
         <Label name="Collaborators" fulled noBorder>
-          <Avatar shape="square" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          <Avatar shape="square" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          <Avatar shape="square" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          <Avatar shape="square" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+          {
+            maintainers.map(maintainer => {
+              return <Avatar shape="square" key={maintainer.name} src={maintainer.url + '?size=100&default=retro'} alt={maintainer.name} style={{ marginRight: 8 }} />
+            })
+          }
         </Label>
       </Row>
     </React.Fragment>
@@ -292,5 +245,26 @@ See [Contributing Guide](https://github.com/vuejs/vue-next/blob/master/.github/c
         </Flex>
       </div>
     </div>
+  }
+
+  private formatVersionLabel(version: string) {
+    return version ? version.replace(/-/g, ' ') : null;
+  }
+
+  private getUrlHost(url: string) {
+    if (!url) return null;
+    const val = Parse(url);
+    return val.hostname;
+  }
+
+  private getUrlHostAndPathname(url: string) {
+    if (!url) return null;
+    const val = Parse(url);
+    return val.hostname + val.pathname;
+  }
+
+  private getGitUrl(url: string) {
+    if (!url) return null;
+    return url.startsWith('git+') ? url.substring(4) : url;
   }
 }
