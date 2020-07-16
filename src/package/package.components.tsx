@@ -7,7 +7,7 @@ import { AntDesignOutlined, CloudSyncOutlined, AlignRightOutlined, LinkOutlined,
 import { TPackageRouteData } from './package.interface';
 import { Context } from '@typeclient/core';
 import { PackageService } from './package.service';
-import { Col, Row, Avatar } from 'antd';
+import { Col, Row, Avatar, Tooltip } from 'antd';
 import Parse from 'url-parse';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -136,7 +136,9 @@ export class PackageComponents {
         <Label name="Collaborators" fulled noBorder>
           {
             maintainers.map(maintainer => {
-              return <Avatar shape="square" key={maintainer.name} src={maintainer.url + '?size=100&default=retro'} alt={maintainer.name} style={{ marginRight: 8 }} />
+              return <Tooltip placement="top" title={maintainer.name} key={maintainer.name}>
+                <Avatar shape="square"  src={maintainer.url + '?size=100&default=retro'} alt={maintainer.name} style={{ marginRight: 8 }} />
+              </Tooltip>
             })
           }
         </Label>
